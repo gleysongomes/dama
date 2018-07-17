@@ -6,12 +6,12 @@ define(function(require) {
 	var CasaService = function() {
 	}
 
-	CasaService.criarCasas = function(n) {
-		var casas = [], coordenadaX = 50, coordenadaY = 50, linha = 0, corSelecionada = "";
+	CasaService.criarCasas = function(k, x, y, n) {
+		var casas = [], coordenadaX = x, coordenadaY = y, linha = 0, corSelecionada = "";
 		for (i = 0; i < n; i++) {
-			if (i > 0 && i % 8 == 0) {
+			if (i > 0 && i % k == 0) {
 				linha++;
-				coordenadaX = 50;
+				coordenadaX = x;
 				coordenadaY += 80;
 			}
 			if (linha % 2 == 0) {

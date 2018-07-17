@@ -1,13 +1,14 @@
-define([ "require", "jquery", "service/TabuleiroService", "controller/CasaController", "controller/PecaController", "util/Constants", "util/Util" ], function(require, $) {
+define([ "require", "jquery", "service/TabuleiroService", "service/PecaService", "controller/CasaController", "controller/PecaController", "util/Constants", "util/Util" ], function(require, $) {
 
-	var casas = [];
-	var pecas = [];
+	var casas = [], pecas = [], casaOrigem = null;
 	var pecaSelecionada = false;
 	var pecaPressionada = false;
 	var coordenadaXAnteriorMouse = 0;
 	var coordenadaYAnteriorMouse = 0;
 
 	var TabuleiroService = require("service/TabuleiroService");
+	var PecaService = require("service/PecaService");
+
 	var CasaController = require("controller/CasaController");
 	var PecaController = require("controller/PecaController");
 	var Constants = require("util/Constants");
@@ -28,6 +29,9 @@ define([ "require", "jquery", "service/TabuleiroService", "controller/CasaContro
 		var ctx = canvas[0].getContext("2d");
 
 		casas = CasaController.adicionarCasasTabuleiro(ctx);
+		casasReceberPecasAzuis = CasaController.adicionarCasasReceberPecasPretas(ctx);
+		casasReceberPecasPretas = CasaController.adicionarCasasReceberPecasAzuis(ctx);
+
 		pecas = PecaController.adicionarPecasTabuleiro(ctx, casas);
 		TabuleiroController.movimentarPecaTabuleiro(canvas[0], ctx);
 	}
@@ -40,6 +44,8 @@ define([ "require", "jquery", "service/TabuleiroService", "controller/CasaContro
 		ctx.closePath();
 
 		CasaController.adicionarCasasTabuleiro(ctx);
+		CasaController.adicionarCasasReceberPecasPretas(ctx);
+		CasaController.adicionarCasasReceberPecasAzuis(ctx);
 		PecaController.reposicionarPecasTabuleiro(ctx, pecas);
 	}
 
@@ -53,15 +59,22 @@ define([ "require", "jquery", "service/TabuleiroService", "controller/CasaContro
 			coordenadaXAnteriorMouse = parseInt(e.clientX - bcr.left);
 			coordenadaYAnteriorMouse = parseInt(e.clientY - bcr.top);
 
+			casaOrigem = null;
 			pecaSelecionada = null;
 			pecaPressionada = false;
 
 			for (i = 0; i < pecas.length; i++) {
-				var peca = pecas[i];
-				if (Math.sqrt(((peca.coordenadaX - coordenadaXAnteriorMouse) * (peca.coordenadaX - coordenadaXAnteriorMouse)) + ((peca.coordenadaY - coordenadaYAnteriorMouse) * (peca.coordenadaY - coordenadaYAnteriorMouse))) < Constants.RAIO_PADRAO) {
-					peca.pressionada = true;
+				if (PecaService.clicouSobrePeca(pecas[i], coordenadaXAnteriorMouse, coordenadaYAnteriorMouse)) {
+					pecas[i].pressionada = true;
 					pecaPressionada = true;
-					pecaSelecionada = peca;
+					pecaSelecionada = pecas[i];
+					for (j = 0; j < casas.length; j++) {
+						if (casas[j].idPeca == pecas[i].id) {
+							casaOrigem = casas[j];
+							break;
+						}
+					}
+					break;
 				}
 			}
 		}
@@ -85,27 +98,15 @@ define([ "require", "jquery", "service/TabuleiroService", "controller/CasaContro
 
 			if (pecaPressionada) {
 
-				if (Util.pecaSobrepostaCasa(casas, pecaSelecionada)) {
-				}
-
 				if (Util.pecaNaoSobrepostaOutra(pecas, pecaSelecionada, {
 					coordenadaX : coordenadaXAtualMouse,
 					coordenadaY : coordenadaYAtualMouse
 				})) {
-					var novaCoordenadaXPeca = coordenadaXAtualMouse - coordenadaXAnteriorMouse;
-					var novaCoordenadaYPeca = coordenadaYAtualMouse - coordenadaYAnteriorMouse;
+					PecaService.atualizarPosicaoPeca(pecas, coordenadaXAnteriorMouse, coordenadaYAnteriorMouse, coordenadaXAtualMouse, coordenadaYAtualMouse);
+					TabuleiroController.reconstruirTabuleiro(ctx);
 
 					coordenadaXAnteriorMouse = coordenadaXAtualMouse;
 					coordenadaYAnteriorMouse = coordenadaYAtualMouse;
-
-					for (i = 0; i < pecas.length; i++) {
-						var peca = pecas[i];
-						if (peca.pressionada) {
-							peca.coordenadaX += novaCoordenadaXPeca;
-							peca.coordenadaY += novaCoordenadaYPeca;
-						}
-					}
-					TabuleiroController.reconstruirTabuleiro(ctx);
 				}
 			}
 		}
@@ -113,9 +114,17 @@ define([ "require", "jquery", "service/TabuleiroService", "controller/CasaContro
 		canvas.onmouseup = function(e) {
 			e.preventDefault();
 			e.stopPropagation();
+
+			if (PecaService.pecaSobrepostaCasa(casas, pecaSelecionada)) {
+				if (PecaService.pecaConquistada(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, pecaSelecionada)) {
+					TabuleiroController.reconstruirTabuleiro(ctx);
+				}
+			}
+
 			for (var i = 0; i < pecas.length; i++) {
 				pecas[i].pressionada = false;
 			}
+
 			pecaPressionada = false;
 		}
 	}
