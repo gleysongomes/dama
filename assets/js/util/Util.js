@@ -32,7 +32,7 @@ define(function(require) {
 				coordenadaY : casas[i].coordenadaY + Constants.ALTURA_PADRAO / 2
 			};
 			if (Math.sqrt(((peca.coordenadaX - centroCasa.coordenadaX) * (peca.coordenadaX - centroCasa.coordenadaX)) + ((peca.coordenadaY - centroCasa.coordenadaY) * (peca.coordenadaY - centroCasa.coordenadaY))) < Constants.RAIO_PADRAO) {
-				casas[i].peca = peca;
+				casas[i].idPeca = peca.id;
 				return true;
 			}
 		}

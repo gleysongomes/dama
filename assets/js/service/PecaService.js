@@ -28,14 +28,14 @@ define(function(require) {
 	PecaService.inserirPeca = function(casas, pecas, linha, i, idPeca, coordenadaX, coordenadaY, cor) {
 		if (linha % 2 == 0) {
 			if (i % 2 == 1) {
-				casas[i].peca = new Peca(idPeca, coordenadaX, coordenadaY, Constants.RAIO_PADRAO, cor);
-				pecas.push(casas[i].peca);
+				casas[i].idPeca = idPeca;
+				pecas.push(new Peca(idPeca, coordenadaX, coordenadaY, Constants.RAIO_PADRAO, cor));
 				idPeca++;
 			}
 		} else {
 			if (i % 2 == 0) {
-				casas[i].peca = new Peca(idPeca, coordenadaX, coordenadaY, Constants.RAIO_PADRAO, cor);
-				pecas.push(casas[i].peca);
+				casas[i].idPeca = idPeca;
+				pecas.push(new Peca(idPeca, coordenadaX, coordenadaY, Constants.RAIO_PADRAO, cor));
 				idPeca++;
 			}
 		}

@@ -6,7 +6,7 @@ define(function() {
 		this.largura = largura;
 		this.altura = altura;
 		this.cor = cor;
-		this.peca = null;
+		this.idPeca = -1;
 	}
 	return Casa;
 });
