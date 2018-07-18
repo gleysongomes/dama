@@ -63,12 +63,12 @@ define([ "require", "jquery", "service/TabuleiroService", "service/PecaService",
 			pecaSelecionada = null;
 			pecaPressionada = false;
 
-			for (i = 0; i < pecas.length; i++) {
+			for (var i = 0; i < pecas.length; i++) {
 				if (PecaService.clicouSobrePeca(pecas[i], coordenadaXAnteriorMouse, coordenadaYAnteriorMouse)) {
 					pecas[i].pressionada = true;
 					pecaPressionada = true;
 					pecaSelecionada = pecas[i];
-					for (j = 0; j < casas.length; j++) {
+					for (var j = 0; j < casas.length; j++) {
 						if (casas[j].idPeca == pecas[i].id) {
 							casaOrigem = casas[j];
 							break;

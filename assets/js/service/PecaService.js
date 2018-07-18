@@ -73,7 +73,7 @@ define(function(require) {
 			};
 			if (Math.sqrt(((peca.coordenadaX - centroCasa.coordenadaX) * (peca.coordenadaX - centroCasa.coordenadaX)) + ((peca.coordenadaY - centroCasa.coordenadaY) * (peca.coordenadaY - centroCasa.coordenadaY))) < Constants.RAIO_PADRAO) {
 				casas[i].idPeca = peca.id;
-				for (j = 0; j < casas.length; j++) {
+				for (var j = 0; j < casas.length; j++) {
 					if (casas[j].id != casas[i].id && casas[j].idPeca == casas[i].idPeca) {
 						casas[j].idPeca = -1;
 					}
@@ -91,18 +91,18 @@ define(function(require) {
 					if (casaOrigem.id % 8 > casas[i].id % 8) {
 						if (casas[i - 7].idPeca != -1 && casas[i - 14].idPeca == -1) {
 							if (pecas[casas[i - 7].idPeca].cor == "black") {
-								PecaService.inserirPecaCasa(PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[i - 7].idPeca]);
+								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[i - 7].idPeca]);
 							} else {
-								PecaService.inserirPecaCasa(PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[i - 7].idPeca]);
+								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[i - 7].idPeca]);
 							}
 							return true;
 						}
 					} else {
 						if (casas[i - 9].idPeca != -1 && casas[i - 18].idPeca == -1) {
 							if (pecas[casas[i - 9].idPeca].cor == "black") {
-								PecaService.inserirPecaCasa(PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[i - 9].idPeca]);
+								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[i - 9].idPeca]);
 							} else {
-								PecaService.inserirPecaCasa(PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[i - 9].idPeca]);
+								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[i - 9].idPeca]);
 							}
 							return true;
 						}
@@ -112,18 +112,18 @@ define(function(require) {
 					if (casaOrigem.id % 8 > casas[i].id % 8) {
 						if (casas[i + 9].idPeca != -1 && casas[i + 18].idPeca == -1) {
 							if (pecas[casas[i + 9].idPeca].cor == "black") {
-								PecaService.inserirPecaCasa(PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[i + 9].idPeca]);
+								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[i + 9].idPeca]);
 							} else {
-								PecaService.inserirPecaCasa(PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[i + 9].idPeca]);
+								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[i + 9].idPeca]);
 							}
 							return true;
 						}
 					} else {
 						if (casas[i + 7].idPeca != -1 && casas[i + 14].idPeca == -1) {
 							if (pecas[casas[i + 7].idPeca].cor == "black") {
-								PecaService.inserirPecaCasa(PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[i + 7].idPeca]);
+								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[i + 7].idPeca]);
 							} else {
-								PecaService.inserirPecaCasa(PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[i + 7].idPeca]);
+								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[i + 7].idPeca]);
 							}
 							return true;
 						}
@@ -143,7 +143,16 @@ define(function(require) {
 		return null;
 	}
 
-	PecaService.inserirPecaCasa = function(casa, peca) {
+	PecaService.removerPecaCasaOrigem = function(casas, peca) {
+		for (var i = 0; i < casas.length; i++) {
+			if (casas[i].idPeca == peca.id) {
+				casas[i].idPeca = -1;
+				break;
+			}
+		}
+	}
+
+	PecaService.inserirPecaCasa = function(casas, casa, peca) {
 		var centroCasa = {
 			coordenadaX : casa.coordenadaX + Constants.LARGURA_PADRAO / 2,
 			coordenadaY : casa.coordenadaY + Constants.ALTURA_PADRAO / 2
@@ -151,6 +160,7 @@ define(function(require) {
 		peca.coordenadaX = centroCasa.coordenadaX;
 		peca.coordenadaY = centroCasa.coordenadaY;
 		casa.idPeca = peca.id;
+		PecaService.removerPecaCasaOrigem(casas, peca);
 	}
 
 	return PecaService;
