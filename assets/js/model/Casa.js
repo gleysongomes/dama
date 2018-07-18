@@ -1,6 +1,8 @@
 define(function() {
-	var Casa = function(id, coordenadaX, coordenadaY, largura, altura, cor) {
+	var Casa = function(id, linha, coluna, coordenadaX, coordenadaY, largura, altura, cor) {
 		this.id = id;
+		this.linha = linha;
+		this.coluna = coluna;
 		this.coordenadaX = coordenadaX;
 		this.coordenadaY = coordenadaY;
 		this.largura = largura;

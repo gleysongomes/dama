@@ -30,20 +30,23 @@ define(function(require) {
 	}
 
 	PecaService.inserirPeca = function(casas, pecas, linha, i, idPeca, coordenadaX, coordenadaY, cor) {
+		var criarPeca = false;
 		if (linha % 2 == 0) {
 			if (i % 2 == 1) {
-				casas[i].idPeca = idPeca;
-				pecas.push(new Peca(idPeca, coordenadaX, coordenadaY, Constants.RAIO_PADRAO, cor));
-				return true;
+				criarPeca = true;
 			}
 		} else {
 			if (i % 2 == 0) {
-				casas[i].idPeca = idPeca;
-				pecas.push(new Peca(idPeca, coordenadaX, coordenadaY, Constants.RAIO_PADRAO, cor));
-				return true;
+				criarPeca = true;
 			}
 		}
-		return false;
+		if (criarPeca) {
+			casas[i].idPeca = idPeca;
+			pecas.push(new Peca(idPeca, coordenadaX, coordenadaY, Constants.RAIO_PADRAO, cor));
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	PecaService.clicouSobrePeca = function(peca, coordenadaXAnteriorMouse, coordenadaYAnteriorMouse) {
@@ -84,50 +87,47 @@ define(function(require) {
 		return false;
 	}
 
+	PecaService.verificarPecaConquistadaCasaAnteiorCasaOrigem = function(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, idCasa, n) {
+		if (casaOrigem.id % n > casas[idCasa].id % n) {
+			n = n + 1;
+		} else {
+			n = n - 1;
+		}
+		if (casas[idCasa + n].idPeca != -1 && casas[idCasa + 2 * n].idPeca == -1) {
+			if (pecas[casas[idCasa + n].idPeca].cor == "black") {
+				PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[idCasa + n].idPeca]);
+			} else {
+				PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[idCasa + n].idPeca]);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	PecaService.verificarPecaConquistadaCasaPosteriorCasaOrigem = function(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, idCasa, n) {
+		if (casaOrigem.id % n > casas[idCasa].id % n) {
+			n = n - 1;
+		} else {
+			n = n + 1;
+		}
+		if (casas[idCasa - n].idPeca != -1 && casas[idCasa - 2 * n].idPeca == -1) {
+			if (pecas[casas[idCasa - n].idPeca].cor == "black") {
+				PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[idCasa - n].idPeca]);
+			} else {
+				PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[idCasa - n].idPeca]);
+			}
+			return true;
+		}
+		return false;
+	}
+
 	PecaService.pecaConquistada = function(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, pecaSelecionada) {
 		for (var i = 0; i < casas.length; i++) {
 			if (casas[i].idPeca == pecaSelecionada.id) {
 				if (casas[i].id > casaOrigem.id) {
-					if (casaOrigem.id % 8 > casas[i].id % 8) {
-						if (casas[i - 7].idPeca != -1 && casas[i - 14].idPeca == -1) {
-							if (pecas[casas[i - 7].idPeca].cor == "black") {
-								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[i - 7].idPeca]);
-							} else {
-								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[i - 7].idPeca]);
-							}
-							return true;
-						}
-					} else {
-						if (casas[i - 9].idPeca != -1 && casas[i - 18].idPeca == -1) {
-							if (pecas[casas[i - 9].idPeca].cor == "black") {
-								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[i - 9].idPeca]);
-							} else {
-								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[i - 9].idPeca]);
-							}
-							return true;
-						}
-					}
-				}
-				if (casas[i].id < casaOrigem.id) {
-					if (casaOrigem.id % 8 > casas[i].id % 8) {
-						if (casas[i + 9].idPeca != -1 && casas[i + 18].idPeca == -1) {
-							if (pecas[casas[i + 9].idPeca].cor == "black") {
-								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[i + 9].idPeca]);
-							} else {
-								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[i + 9].idPeca]);
-							}
-							return true;
-						}
-					} else {
-						if (casas[i + 7].idPeca != -1 && casas[i + 14].idPeca == -1) {
-							if (pecas[casas[i + 7].idPeca].cor == "black") {
-								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasPretas), pecas[casas[i + 7].idPeca]);
-							} else {
-								PecaService.inserirPecaCasa(casas, PecaService.casaLivre(casasReceberPecasAzuis), pecas[casas[i + 7].idPeca]);
-							}
-							return true;
-						}
-					}
+					return PecaService.verificarPecaConquistadaCasaPosteriorCasaOrigem(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, i, 8);
+				} else {
+					return PecaService.verificarPecaConquistadaCasaAnteiorCasaOrigem(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, i, 8);
 				}
 			}
 		}
