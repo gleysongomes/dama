@@ -7,8 +7,8 @@ define(function(require) {
 	}
 
 	CasaController.adicionarCasasTabuleiro = function(ctx) {
-		var casas = CasaService.criarCasas(8, 350, 50, Constants.NUMERO_CASAS);
-		for (i = 0; i < casas.length; i++) {
+		var casas = CasaService.criarCasas(Constants.NUMERO_PECAS_LINHA, 350, 50, Constants.NUMERO_CASAS);
+		for (let i = 0; i < casas.length; i++) {
 			CasaController.adicionarCasaTabuleiro(ctx, casas[i]);
 		}
 		return casas;
@@ -16,7 +16,7 @@ define(function(require) {
 
 	CasaController.adicionarCasasReceberPecasPretas = function(ctx) {
 		var casas = CasaService.criarCasas(3, 50, 50, 12);
-		for (i = 0; i < casas.length; i++) {
+		for (let i = 0; i < casas.length; i++) {
 			CasaController.adicionarCasaSemCorTabuleiro(ctx, casas[i]);
 		}
 		return casas;
@@ -24,7 +24,7 @@ define(function(require) {
 
 	CasaController.adicionarCasasReceberPecasAzuis = function(ctx) {
 		var casas = CasaService.criarCasas(3, 1050, 50, 12);
-		for (i = 0; i < casas.length; i++) {
+		for (let i = 0; i < casas.length; i++) {
 			CasaController.adicionarCasaSemCorTabuleiro(ctx, casas[i]);
 		}
 		return casas;

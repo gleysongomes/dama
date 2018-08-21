@@ -8,6 +8,7 @@ define(function() {
 		this.anguloInicial = 0;
 		this.anguloFinal = 2 * Math.PI;
 		this.pressionada = false;
+		this.dama = false;
 	}
 	return Peca;
 });

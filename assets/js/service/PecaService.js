@@ -8,7 +8,7 @@ define(function(require) {
 
 	PecaService.criarPecas = function(casas) {
 		var pecas = [], coordenadaX = 390, coordenadaY = 90, linha = 0, idPeca = 0;
-		for (i = 0; i < casas.length; i++) {
+		for (let i = 0; i < casas.length; i++) {
 			if (i > 0 && i % 8 == 0) {
 				linha++;
 				coordenadaX = 390;
@@ -59,7 +59,7 @@ define(function(require) {
 	PecaService.atualizarPosicaoPeca = function(pecas, coordenadaXAnteriorMouse, coordenadaYAnteriorMouse, coordenadaXAtualMouse, coordenadaYAtualMouse) {
 		var novaCoordenadaXPeca = coordenadaXAtualMouse - coordenadaXAnteriorMouse;
 		var novaCoordenadaYPeca = coordenadaYAtualMouse - coordenadaYAnteriorMouse;
-		for (var i = 0; i < pecas.length; i++) {
+		for (let i = 0; i < pecas.length; i++) {
 			var peca = pecas[i];
 			if (peca.pressionada) {
 				peca.coordenadaX += novaCoordenadaXPeca;
@@ -69,14 +69,14 @@ define(function(require) {
 	}
 
 	PecaService.pecaSobrepostaCasa = function(casas, peca) {
-		for (var i = 0; i < casas.length; i++) {
+		for (let i = 0; i < casas.length; i++) {
 			var centroCasa = {
 				coordenadaX : casas[i].coordenadaX + Constants.LARGURA_PADRAO / 2,
 				coordenadaY : casas[i].coordenadaY + Constants.ALTURA_PADRAO / 2
 			};
 			if (Math.sqrt(((peca.coordenadaX - centroCasa.coordenadaX) * (peca.coordenadaX - centroCasa.coordenadaX)) + ((peca.coordenadaY - centroCasa.coordenadaY) * (peca.coordenadaY - centroCasa.coordenadaY))) < Constants.RAIO_PADRAO) {
 				casas[i].idPeca = peca.id;
-				for (var j = 0; j < casas.length; j++) {
+				for (let j = 0; j < casas.length; j++) {
 					if (casas[j].id != casas[i].id && casas[j].idPeca == casas[i].idPeca) {
 						casas[j].idPeca = -1;
 					}
@@ -122,12 +122,12 @@ define(function(require) {
 	}
 
 	PecaService.pecaConquistada = function(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, pecaSelecionada) {
-		for (var i = 0; i < casas.length; i++) {
+		for (let i = 0; i < casas.length; i++) {
 			if (casas[i].idPeca == pecaSelecionada.id) {
 				if (casas[i].id > casaOrigem.id) {
-					return PecaService.verificarPecaConquistadaCasaPosteriorCasaOrigem(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, i, 8);
+					return PecaService.verificarPecaConquistadaCasaPosteriorCasaOrigem(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, i, Constants.NUMERO_PECAS_LINHA);
 				} else {
-					return PecaService.verificarPecaConquistadaCasaAnteiorCasaOrigem(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, i, 8);
+					return PecaService.verificarPecaConquistadaCasaAnteiorCasaOrigem(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, i, Constants.NUMERO_PECAS_LINHA);
 				}
 			}
 		}
@@ -135,7 +135,7 @@ define(function(require) {
 	}
 
 	PecaService.casaLivre = function(casas) {
-		for (var i = 0; i < casas.length; i++) {
+		for (let i = 0; i < casas.length; i++) {
 			if (casas[i].idPeca == -1) {
 				return casas[i];
 			}
@@ -144,7 +144,7 @@ define(function(require) {
 	}
 
 	PecaService.removerPecaCasaOrigem = function(casas, peca) {
-		for (var i = 0; i < casas.length; i++) {
+		for (let i = 0; i < casas.length; i++) {
 			if (casas[i].idPeca == peca.id) {
 				casas[i].idPeca = -1;
 				break;
