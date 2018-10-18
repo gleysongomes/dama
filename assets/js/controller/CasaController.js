@@ -35,7 +35,6 @@ define(function(require) {
 		ctx.fillStyle = casa.cor;
 		ctx.fillRect(casa.coordenadaX, casa.coordenadaY, casa.largura, casa.altura);
 		ctx.closePath();
-
 	}
 
 	CasaController.adicionarCasaSemCorTabuleiro = function(ctx, casa) {
@@ -43,7 +42,6 @@ define(function(require) {
 		ctx.rect(casa.coordenadaX, casa.coordenadaY, casa.largura, casa.altura);
 		ctx.stroke();
 		ctx.closePath();
-
 	}
 
 	return CasaController;

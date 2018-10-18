@@ -8,7 +8,7 @@ define(function(require) {
 
 	CasaService.criarCasas = function(k, x, y, n) {
 		var casas = [], coordenadaX = x, coordenadaY = y, linha = 0, coluna = 0, corSelecionada = "";
-		for (var i = 0; i < n; i++) {
+		for (let i = 0; i < n; i++) {
 			if (i > 0 && i % k == 0) {
 				linha++;
 				coluna = 0;
