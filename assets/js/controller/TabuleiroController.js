@@ -1,20 +1,10 @@
-define([ "require", "jquery", "service/TabuleiroService", "service/PecaService", "controller/CasaController", "controller/PecaController", "util/Constants", "util/Util" ], function(require, $) {
+define([ "require", "jquery", "model/Tabuleiro", "service/TabuleiroService"], function(require, $) {
 
-	var casas = [], pecas = [], casaOrigem = null;
-	var pecaSelecionada = false;
-	var pecaPressionada = false;
-	var coordenadaXAnteriorMouse = 0;
-	var coordenadaYAnteriorMouse = 0;
-
+	var Tabuleiro = require("model/Tabuleiro");
 	var TabuleiroService = require("service/TabuleiroService");
-	var PecaService = require("service/PecaService");
-
-	var CasaController = require("controller/CasaController");
-	var PecaController = require("controller/PecaController");
-	var Constants = require("util/Constants");
-	var Util = require("util/Util");
 
 	var TabuleiroController = function() {
+		this.tabuleiro = new Tabuleiro();
 	}
 
 	TabuleiroController.criarTabuleiro = function() {
@@ -27,108 +17,8 @@ define([ "require", "jquery", "service/TabuleiroService", "service/PecaService",
 			"background-color" : Constants.COR_BACKGROUND_TABULEIRO
 		});
 		var ctx = canvas[0].getContext("2d");
-
-		casas = CasaController.adicionarCasasTabuleiro(ctx);
-		casasReceberPecasAzuis = CasaController.adicionarCasasReceberPecasPretas(ctx);
-		casasReceberPecasPretas = CasaController.adicionarCasasReceberPecasAzuis(ctx);
-
-		pecas = PecaController.adicionarPecasTabuleiro(ctx, casas);
-		TabuleiroController.movimentarPecaTabuleiro(canvas[0], ctx);
-	}
-
-	TabuleiroController.reconstruirTabuleiro = function(ctx) {
-		ctx.clearRect(0, 0, Constants.LARGURA_TABULEIRO, Constants.ALTURA_TABULEIRO);
-		ctx.beginPath();
-		ctx.fillStyle = Constants.COR_BACKGROUND_TABULEIRO;
-		ctx.fillRect(0, 0, Constants.LARGURA_TABULEIRO, Constants.ALTURA_TABULEIRO);
-		ctx.closePath();
-
-		CasaController.adicionarCasasTabuleiro(ctx);
-		CasaController.adicionarCasasReceberPecasPretas(ctx);
-		CasaController.adicionarCasasReceberPecasAzuis(ctx);
-		PecaController.reposicionarPecasTabuleiro(ctx, pecas);
-	}
-
-	TabuleiroController.movimentarPecaTabuleiro = function(canvas, ctx) {
-		var bcr = canvas.getBoundingClientRect();
-
-		canvas.onmousedown = function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-
-			coordenadaXAnteriorMouse = parseInt(e.clientX - bcr.left);
-			coordenadaYAnteriorMouse = parseInt(e.clientY - bcr.top);
-
-			casaOrigem = null;
-			pecaSelecionada = null;
-			pecaPressionada = false;
-
-			for (var i = 0; i < pecas.length; i++) {
-				if (PecaService.clicouSobrePeca(pecas[i], coordenadaXAnteriorMouse, coordenadaYAnteriorMouse)) {
-					pecas[i].pressionada = true;
-					pecaPressionada = true;
-					pecaSelecionada = pecas[i];
-					for (var j = 0; j < casas.length; j++) {
-						if (casas[j].idPeca == pecas[i].id) {
-							casaOrigem = casas[j];
-							break;
-						}
-					}
-					break;
-				}
-			}
-		}
-
-		canvas.onmousemove = function(e) {
-
-			e.preventDefault();
-			e.stopPropagation();
-
-			var coordenadaXAtualMouse = parseInt(e.clientX - bcr.left);
-			var coordenadaYAtualMouse = parseInt(e.clientY - bcr.top);
-
-			if (Util.mouseSobrepostoPeca(pecas, {
-				coordenadaX : coordenadaXAtualMouse,
-				coordenadaY : coordenadaYAtualMouse
-			})) {
-				canvas.style.cursor = 'pointer';
-			} else {
-				canvas.style.cursor = 'default';
-			}
-
-			if (pecaPressionada) {
-
-				if (Util.pecaNaoSobrepostaOutra(pecas, pecaSelecionada, {
-					coordenadaX : coordenadaXAtualMouse,
-					coordenadaY : coordenadaYAtualMouse
-				})) {
-					PecaService.atualizarPosicaoPeca(pecas, coordenadaXAnteriorMouse, coordenadaYAnteriorMouse, coordenadaXAtualMouse, coordenadaYAtualMouse);
-					TabuleiroController.reconstruirTabuleiro(ctx);
-
-					coordenadaXAnteriorMouse = coordenadaXAtualMouse;
-					coordenadaYAnteriorMouse = coordenadaYAtualMouse;
-				}
-			}
-		}
-
-		canvas.onmouseup = function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-
-			if (PecaService.pecaSobrepostaCasa(casas, pecaSelecionada)) {
-				if (PecaService.pecaConquistada(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, pecaSelecionada)) {
-					TabuleiroController.reconstruirTabuleiro(ctx);
-				}
-			}
-
-			for (var i = 0; i < pecas.length; i++) {
-				pecas[i].pressionada = false;
-			}
-
-			pecaPressionada = false;
-		}
+		this.tabuleiro = TabuleiroService.criarTabuleiro(canvas, ctx);
 	}
 
 	return TabuleiroController;
-
 });
