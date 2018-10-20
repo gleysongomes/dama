@@ -5,6 +5,6 @@ requirejs.config({
 	}
 });
 
-require([ "app" ], function(TabuleiroController) {
-	TabuleiroController.criarTabuleiro();
+require([ "app" ], function(App) {
+	App.build();
 });
