@@ -1,13 +1,14 @@
-define([ "require", "jquery", "model/Tabuleiro", "service/TabuleiroService"], function(require, $) {
+define([ "require", "jquery", "model/TabuleiroModel", "service/TabuleiroService", "util/Constants"], function(require, $) {
 
-	var Tabuleiro = require("model/Tabuleiro");
+	var Constants = require("util/Constants");
+	var Tabuleiro = require("model/TabuleiroModel");
 	var TabuleiroService = require("service/TabuleiroService");
 
 	var TabuleiroController = function() {
 		this.tabuleiro = new Tabuleiro();
 	}
 
-	TabuleiroController.criarTabuleiro = function() {
+	TabuleiroController.prototype.criarTabuleiro = function() {
 		var canvas = $("#jogoDama");
 		canvas.attr({
 			width : Constants.LARGURA_TABULEIRO,

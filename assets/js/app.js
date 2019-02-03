@@ -1,13 +1,15 @@
-define(function(require) {
-	var JogadorController = require("controller/JogadorController");
+define(function (require) {
 	var TabuleiroController = require("controller/TabuleiroController");
-	var App = function(){
-	}
-	App.build = function(){
+	var ObservadorController = require("controller/ObservadorController");
+	var App = function () {}
+	App.build = function () {
 		var tabuleiroController = new TabuleiroController();
 		tabuleiroController.criarTabuleiro();
-		var jogadorController = new JogadorController(tabuleiro);
-		jogadorController.initialize();
+
+		//console.log(tabuleiroController.tabuleiro);
+
+		//var observadorController = new ObservadorController(tabuleiroController.tabuleiro);
+		//observadorController.initialize();
 	}
 	return App;
 });

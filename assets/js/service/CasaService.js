@@ -1,13 +1,17 @@
-define(function(require) {
+define(function (require) {
 
-	var Casa = require("model/Casa");
+	var CasaModel = require("model/CasaModel");
 	var Constants = require("util/Constants");
 
-	var CasaService = function() {
-	}
+	var CasaService = function () {}
 
-	CasaService.criarCasas = function(k, x, y, n) {
-		var casas = [], coordenadaX = x, coordenadaY = y, linha = 0, coluna = 0, corSelecionada = "";
+	CasaService.criarCasas = function (k, x, y, n) {
+		let casas = [],
+			coordenadaX = x,
+			coordenadaY = y,
+			linha = 0,
+			coluna = 0,
+			corSelecionada = "";
 		for (let i = 0; i < n; i++) {
 			if (i > 0 && i % k == 0) {
 				linha++;
@@ -28,11 +32,74 @@ define(function(require) {
 					corSelecionada = "#ffffff";
 				}
 			}
-			casas.push(new Casa(i, linha, coluna, coordenadaX, coordenadaY, Constants.LARGURA_PADRAO, Constants.ALTURA_PADRAO, corSelecionada));
+
+			let ponto = {
+				x: coordenadaX,
+				y: coordenadaY
+			};
+
+			let dimensao = {
+				largura: Constants.LARGURA_PADRAO,
+				altura: Constants.ALTURA_PADRAO
+			};
+
+			let celula = {
+				linha: linha,
+				coluna: coluna
+			};
+
+			let casaModel = {
+				id: i,
+				celula: celula,
+				ponto: ponto,
+				dimensao: dimensao,
+				cor: corSelecionada
+			};
+
+			casas.push(casaModel);
 			coluna++;
 			coordenadaX += 80;
 		}
 		return casas;
 	}
+
+	CasaService.adicionarCasasTabuleiro = function (ctx) {
+		var casas = CasaService.criarCasas(Constants.NUMERO_PECAS_LINHA, 350, 50, Constants.NUMERO_CASAS);
+		for (let i = 0; i < casas.length; i++) {
+			CasaService.adicionarCasaTabuleiro(ctx, casas[i]);
+		}
+		return casas;
+	}
+
+	CasaService.adicionarCasasReceberPecasPretas = function (ctx) {
+		var casas = CasaService.criarCasas(3, 50, 50, 12);
+		for (let i = 0; i < casas.length; i++) {
+			CasaService.adicionarCasaSemCorTabuleiro(ctx, casas[i]);
+		}
+		return casas;
+	}
+
+	CasaService.adicionarCasasReceberPecasAzuis = function (ctx) {
+		var casas = CasaService.criarCasas(3, 1050, 50, 12);
+		for (let i = 0; i < casas.length; i++) {
+			CasaService.adicionarCasaSemCorTabuleiro(ctx, casas[i]);
+		}
+		return casas;
+	}
+
+	CasaService.adicionarCasaTabuleiro = function (ctx, casa) {
+		ctx.beginPath();
+		ctx.fillStyle = casa.cor;
+		ctx.fillRect(casa.ponto.x, casa.ponto.y, casa.dimensao.largura, casa.dimensao.altura);
+		ctx.closePath();
+	}
+
+	CasaService.adicionarCasaSemCorTabuleiro = function (ctx, casa) {
+		ctx.beginPath();
+		ctx.rect(casa.ponto.x, casa.ponto.y, casa.dimensao.largura, casa.dimensao.altura);
+		ctx.stroke();
+		ctx.closePath();
+	}
+
 	return CasaService;
 });

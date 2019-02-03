@@ -1,23 +1,23 @@
-define(function(){
-	
-	var JogadorController = function(tabuleiro){
+define(function () {
+
+	var ObservadorController = function (tabuleiro) {
 		this.pecaMovimentada = null;
 		this.pecaPressionada = false;
 		this.coordenadaYAnteriorMouse = 0;
 		this.coordenadaXAnteriorMouse = 0;
 		this.casaOrigemPecaMovida = null;
 		this.tabuleiro = tabuleiro;
-    }
+	}
 
-    JogadorController.initialize = function(){
+	ObservadorController.initialize = function () {
 		this.tratarCliqueSobrePeca();
 		this.tratarMovimentoPeca();
 		this.tratarPecaMovida();
-    }
-	
-	JogadorController.tratarCliqueSobrePeca = function(this.tabuleiro.canvas){
+	}
+
+	ObservadorController.tratarCliqueSobrePeca = function () {
 		var bcr = this.tabuleiro.canvas.getBoundingClientRect();
-		this.tabuleiro.canvas.onmousedown = function(e) {
+		this.tabuleiro.canvas.onmousedown = function (e) {
 			e.preventDefault();
 			e.stopPropagation();
 			this.coordenadaXAnteriorMouse = parseInt(e.clientX - bcr.left);
@@ -42,26 +42,26 @@ define(function(){
 		}
 	}
 
-	JogadorController.tratarMovimentoPeca = function(this.tabuleiro.canvas, this.tabuleiro.ctx){
+	ObservadorController.tratarMovimentoPeca = function () {
 		var bcr = this.tabuleiro.canvas.getBoundingClientRect();
-		this.tabuleiro.canvas.onmousemove = function(e) {
+		this.tabuleiro.canvas.onmousemove = function (e) {
 			e.preventDefault();
 			e.stopPropagation();
 			var coordenadaXAtualMouse = parseInt(e.clientX - bcr.left);
 			var coordenadaYAtualMouse = parseInt(e.clientY - bcr.top);
 			if (PecaService.mouseSobrepostoPeca(this.tabuleiro.pecas, {
-				coordenadaX : coordenadaXAtualMouse,
-				coordenadaY : coordenadaYAtualMouse
-			})) {
+					coordenadaX: coordenadaXAtualMouse,
+					coordenadaY: coordenadaYAtualMouse
+				})) {
 				this.tabuleiro.canvas.style.cursor = 'pointer';
 			} else {
 				this.tabuleiro.canvas.style.cursor = 'default';
 			}
 			if (this.pecaPressionada) {
 				if (PecaService.pecaNaoSobrepostaOutra(this.tabuleiro.pecas, this.pecaMovimentada, {
-					coordenadaX : coordenadaXAtualMouse,
-					coordenadaY : coordenadaYAtualMouse
-				})) {
+						coordenadaX: coordenadaXAtualMouse,
+						coordenadaY: coordenadaYAtualMouse
+					})) {
 					PecaService.atualizarPosicaoPeca(this.tabuleiro.pecas, this.coordenadaXAnteriorMouse, this.coordenadaYAnteriorMouse, coordenadaXAtualMouse, coordenadaYAtualMouse);
 					TabuleiroService.reconstruirTabuleiro(this.tabuleiro.ctx);
 					this.coordenadaXAnteriorMouse = coordenadaXAtualMouse;
@@ -71,8 +71,8 @@ define(function(){
 		}
 	}
 
-    JogadorController.tratarPecaMovida = function(this.tabuleiro.canvas, this.tabuleiro.ctx) {
-		this.tabuleiro.canvas.onmouseup = function(e) {
+	ObservadorController.tratarPecaMovida = function () {
+		this.tabuleiro.canvas.onmouseup = function (e) {
 			e.preventDefault();
 			e.stopPropagation();
 			if (PecaService.pecaSobrepostaCasa(this.tabuleiro.casas, this.pecaMovimentada)) {
@@ -85,6 +85,6 @@ define(function(){
 			}
 			this.pecaPressionada = false;
 		}
-    }
-    return JogadorController;
+	}
+	return ObservadorController;
 });

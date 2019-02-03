@@ -1,13 +1,18 @@
-define(function(require) {
+define(function (require) {
 
-	var Peca = require("model/Peca");
 	var Constants = require("util/Constants");
+	var PecaModel = require("model/PecaModel");
+	var PontoModel = require("model/PontoModel");
+	var DimensaoModel = require("model/DimensaoModel");
 
-	var PecaService = function() {
-	}
+	var PecaService = function () {}
 
-	PecaService.criarPecas = function(casas) {
-		var pecas = [], coordenadaX = 390, coordenadaY = 90, linha = 0, idPeca = 0;
+	PecaService.criarPecas = function (casas) {
+		var pecas = [],
+			coordenadaX = 390,
+			coordenadaY = 90,
+			linha = 0,
+			idPeca = 0;
 		for (let i = 0; i < casas.length; i++) {
 			if (i > 0 && i % 8 == 0) {
 				linha++;
@@ -29,7 +34,7 @@ define(function(require) {
 		return pecas;
 	}
 
-	PecaService.inserirPeca = function(casas, pecas, linha, i, idPeca, coordenadaX, coordenadaY, cor) {
+	PecaService.inserirPeca = function (casas, pecas, linha, i, idPeca, coordenadaX, coordenadaY, cor) {
 		var criarPeca = false;
 		if (linha % 2 == 0) {
 			if (i % 2 == 1) {
@@ -41,22 +46,25 @@ define(function(require) {
 			}
 		}
 		if (criarPeca) {
-			casas[i].idPeca = idPeca;
-			pecas.push(new Peca(idPeca, coordenadaX, coordenadaY, Constants.RAIO_PADRAO, cor));
+			let ponto = new PontoModel(coordenadaX, coordenadaY);
+			let dimensao = new DimensaoModel(Constants.RAIO_PADRAO);
+			let peca = new PecaModel(idPeca, dimensao, ponto, cor);
+			casas[i].peca = peca;
+			pecas.push(peca);
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	PecaService.clicouSobrePeca = function(peca, coordenadaXAnteriorMouse, coordenadaYAnteriorMouse) {
+	PecaService.clicouSobrePeca = function (peca, coordenadaXAnteriorMouse, coordenadaYAnteriorMouse) {
 		if (Math.sqrt(((peca.coordenadaX - coordenadaXAnteriorMouse) * (peca.coordenadaX - coordenadaXAnteriorMouse)) + ((peca.coordenadaY - coordenadaYAnteriorMouse) * (peca.coordenadaY - coordenadaYAnteriorMouse))) < Constants.RAIO_PADRAO) {
 			return true;
 		}
 		return false;
 	}
 
-	PecaService.atualizarPosicaoPeca = function(pecas, coordenadaXAnteriorMouse, coordenadaYAnteriorMouse, coordenadaXAtualMouse, coordenadaYAtualMouse) {
+	PecaService.atualizarPosicaoPeca = function (pecas, coordenadaXAnteriorMouse, coordenadaYAnteriorMouse, coordenadaXAtualMouse, coordenadaYAtualMouse) {
 		var novaCoordenadaXPeca = coordenadaXAtualMouse - coordenadaXAnteriorMouse;
 		var novaCoordenadaYPeca = coordenadaYAtualMouse - coordenadaYAnteriorMouse;
 		for (let i = 0; i < pecas.length; i++) {
@@ -68,11 +76,11 @@ define(function(require) {
 		}
 	}
 
-	PecaService.pecaSobrepostaCasa = function(casas, peca) {
+	PecaService.pecaSobrepostaCasa = function (casas, peca) {
 		for (let i = 0; i < casas.length; i++) {
 			var centroCasa = {
-				coordenadaX : casas[i].coordenadaX + Constants.LARGURA_PADRAO / 2,
-				coordenadaY : casas[i].coordenadaY + Constants.ALTURA_PADRAO / 2
+				coordenadaX: casas[i].coordenadaX + Constants.LARGURA_PADRAO / 2,
+				coordenadaY: casas[i].coordenadaY + Constants.ALTURA_PADRAO / 2
 			};
 			if (Math.sqrt(((peca.coordenadaX - centroCasa.coordenadaX) * (peca.coordenadaX - centroCasa.coordenadaX)) + ((peca.coordenadaY - centroCasa.coordenadaY) * (peca.coordenadaY - centroCasa.coordenadaY))) < Constants.RAIO_PADRAO) {
 				casas[i].idPeca = peca.id;
@@ -87,7 +95,7 @@ define(function(require) {
 		return false;
 	}
 
-	PecaService.verificarPecaConquistadaCasaAnteiorCasaOrigem = function(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, idCasa, n) {
+	PecaService.verificarPecaConquistadaCasaAnteiorCasaOrigem = function (casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, idCasa, n) {
 		if (casaOrigem.id % n > casas[idCasa].id % n) {
 			n = n + 1;
 		} else {
@@ -104,7 +112,7 @@ define(function(require) {
 		return false;
 	}
 
-	PecaService.verificarPecaConquistadaCasaPosteriorCasaOrigem = function(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, idCasa, n) {
+	PecaService.verificarPecaConquistadaCasaPosteriorCasaOrigem = function (casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, idCasa, n) {
 		if (casaOrigem.id % n > casas[idCasa].id % n) {
 			n = n - 1;
 		} else {
@@ -121,7 +129,7 @@ define(function(require) {
 		return false;
 	}
 
-	PecaService.pecaConquistada = function(casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, pecaSelecionada) {
+	PecaService.pecaConquistada = function (casas, pecas, casasReceberPecasPretas, casasReceberPecasAzuis, casaOrigem, pecaSelecionada) {
 		for (let i = 0; i < casas.length; i++) {
 			if (casas[i].idPeca == pecaSelecionada.id) {
 				if (casas[i].id > casaOrigem.id) {
@@ -134,7 +142,7 @@ define(function(require) {
 		return false;
 	}
 
-	PecaService.casaLivre = function(casas) {
+	PecaService.casaLivre = function (casas) {
 		for (let i = 0; i < casas.length; i++) {
 			if (casas[i].idPeca == -1) {
 				return casas[i];
@@ -143,7 +151,7 @@ define(function(require) {
 		return null;
 	}
 
-	PecaService.removerPecaCasaOrigem = function(casas, peca) {
+	PecaService.removerPecaCasaOrigem = function (casas, peca) {
 		for (let i = 0; i < casas.length; i++) {
 			if (casas[i].idPeca == peca.id) {
 				casas[i].idPeca = -1;
@@ -152,15 +160,37 @@ define(function(require) {
 		}
 	}
 
-	PecaService.inserirPecaCasa = function(casas, casa, peca) {
+	PecaService.inserirPecaCasa = function (casas, casa, peca) {
 		var centroCasa = {
-			coordenadaX : casa.coordenadaX + Constants.LARGURA_PADRAO / 2,
-			coordenadaY : casa.coordenadaY + Constants.ALTURA_PADRAO / 2
+			coordenadaX: casa.coordenadaX + Constants.LARGURA_PADRAO / 2,
+			coordenadaY: casa.coordenadaY + Constants.ALTURA_PADRAO / 2
 		};
 		peca.coordenadaX = centroCasa.coordenadaX;
 		peca.coordenadaY = centroCasa.coordenadaY;
 		casa.idPeca = peca.id;
 		PecaService.removerPecaCasaOrigem(casas, peca);
+	}
+
+	PecaService.adicionarPecasTabuleiro = function (ctx, casas) {
+		var pecas = PecaService.criarPecas(casas);
+		for (i = 0; i < pecas.length; i++) {
+			PecaService.adicionarPecaTabuleiro(ctx, pecas[i]);
+		}
+		return pecas;
+	}
+
+	PecaService.adicionarPecaTabuleiro = function (ctx, peca) {
+		ctx.beginPath();
+		ctx.fillStyle = peca.cor;
+		ctx.arc(peca.ponto.x, peca.ponto.y, peca.dimensao.raio, peca.dimensao.anguloInicial, peca.dimensao.anguloFinal);
+		ctx.fill();
+		ctx.closePath();
+	}
+
+	PecaService.reposicionarPecasTabuleiro = function (ctx, pecas) {
+		for (i = 0; i < pecas.length; i++) {
+			PecaService.adicionarPecaTabuleiro(ctx, pecas[i]);
+		}
 	}
 
 	return PecaService;
