@@ -8,49 +8,64 @@ define(function (require) {
 	var PecaService = function () {}
 
 	PecaService.criarPecas = function (casas) {
-		var pecas = [],
-			coordenadaX = 390,
-			coordenadaY = 90,
-			linha = 0,
-			idPeca = 0;
-		for (let i = 0; i < casas.length; i++) {
+		let opts = {
+			indice: 0,
+			linha: 0
+		};
+		let tabuleiro = {
+			casas: casas,
+			pecas: []
+		};
+		let pecaDto = {
+			id: 0,
+			cor: "",
+			ponto: {
+				x: 390,
+				y: 90
+			}
+		};
+		for (let i = 0; i < tabuleiro.casas.length; i++) {
 			if (i > 0 && i % 8 == 0) {
-				linha++;
-				coordenadaX = 390;
-				coordenadaY += 80;
+				opts.linha++;
+				pecaDto.ponto.x = 390;
+				pecaDto.ponto.y += 80;
 			}
-			if (linha < 3) {
-				if (PecaService.inserirPeca(casas, pecas, linha, i, idPeca, coordenadaX, coordenadaY, "black")) {
-					idPeca++;
+			if (opts.linha < 3) {
+				opts.indice = i;
+				pecaDto.cor = "black";
+				if (PecaService.criou(tabuleiro, pecaDto, opts)) {
+					pecaDto.id++;
 				}
 			}
-			if (linha > 4) {
-				if (PecaService.inserirPeca(casas, pecas, linha, i, idPeca, coordenadaX, coordenadaY, "#5f9ea0")) {
-					idPeca++;
+			if (opts.linha > 4) {
+				opts.indice = i;
+				pecaDto.cor = "#5f9ea0";
+				if (PecaService.criou(tabuleiro, pecaDto, opts)) {
+					pecaDto.id++;
 				}
 			}
-			coordenadaX += 80;
+			pecaDto.ponto.x += 80;
 		}
-		return pecas;
+		return tabuleiro.pecas;
 	}
 
-	PecaService.inserirPeca = function (casas, pecas, linha, i, idPeca, coordenadaX, coordenadaY, cor) {
-		var criarPeca = false;
-		if (linha % 2 == 0) {
-			if (i % 2 == 1) {
-				criarPeca = true;
+	PecaService.criou = function (tabuleiro, pecaDto, opts) {
+		var valida = false;
+		if (opts.linha % 2 == 0) {
+			if (opts.indice % 2 == 1) {
+				valida = true;
 			}
 		} else {
-			if (i % 2 == 0) {
-				criarPeca = true;
+			if (opts.indice % 2 == 0) {
+				valida = true;
 			}
 		}
-		if (criarPeca) {
-			let ponto = new PontoModel(coordenadaX, coordenadaY);
+		if (valida) {
+			let ponto = new PontoModel(pecaDto.ponto.x, pecaDto.ponto.y);
 			let dimensao = new DimensaoModel(Constants.RAIO_PADRAO);
-			let peca = new PecaModel(idPeca, dimensao, ponto, cor);
-			casas[i].peca = peca;
-			pecas.push(peca);
+			let peca = new PecaModel(pecaDto.id, dimensao, ponto, pecaDto.cor);
+			tabuleiro.casas[opts.indice].peca = peca;
+			tabuleiro.pecas.push(peca);
 			return true;
 		} else {
 			return false;
