@@ -12,7 +12,7 @@ define(function (require) {
 		let casasReceberPecasAzuis = CasaService.adicionarCasasReceberPecasPretas(ctx);
 		let casasReceberPecasPretas = CasaService.adicionarCasasReceberPecasAzuis(ctx);
 		return {
-			canvas: canvas,
+			canvas: canvas[0],
 			ctx: ctx,
 			casas: casas,
 			pecas: pecas,

@@ -4,12 +4,9 @@ define(function (require) {
 	var App = function () {}
 	App.build = function () {
 		var tabuleiroController = new TabuleiroController();
-		tabuleiroController.criarTabuleiro();
-
-		//console.log(tabuleiroController.tabuleiro);
-
-		//var observadorController = new ObservadorController(tabuleiroController.tabuleiro);
-		//observadorController.initialize();
+		var tabuleiro = tabuleiroController.criarTabuleiro();
+		var observadorController = new ObservadorController(tabuleiro);
+		observadorController.initialize();
 	}
 	return App;
 });

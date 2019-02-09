@@ -57,13 +57,6 @@ define(function (require) {
 		}
 	}
 
-	PecaService.clicouSobrePeca = function (peca, coordenadaXAnteriorMouse, coordenadaYAnteriorMouse) {
-		if (Math.sqrt(((peca.coordenadaX - coordenadaXAnteriorMouse) * (peca.coordenadaX - coordenadaXAnteriorMouse)) + ((peca.coordenadaY - coordenadaYAnteriorMouse) * (peca.coordenadaY - coordenadaYAnteriorMouse))) < Constants.RAIO_PADRAO) {
-			return true;
-		}
-		return false;
-	}
-
 	PecaService.atualizarPosicaoPeca = function (pecas, coordenadaXAnteriorMouse, coordenadaYAnteriorMouse, coordenadaXAtualMouse, coordenadaYAtualMouse) {
 		var novaCoordenadaXPeca = coordenadaXAtualMouse - coordenadaXAnteriorMouse;
 		var novaCoordenadaYPeca = coordenadaYAtualMouse - coordenadaYAnteriorMouse;
@@ -191,6 +184,15 @@ define(function (require) {
 		for (i = 0; i < pecas.length; i++) {
 			PecaService.adicionarPecaTabuleiro(ctx, pecas[i]);
 		}
+	}
+
+	PecaService.mouseSobrepostoPeca = function (pecas, mouse) {
+		for (i = 0; i < pecas.length; i++) {
+			if (Math.sqrt(((mouse.coordenadaX - pecas[i].ponto.x) * (mouse.coordenadaX - pecas[i].ponto.x)) + ((mouse.coordenadaY - pecas[i].ponto.y) * (mouse.coordenadaY - pecas[i].ponto.y))) < Constants.RAIO_PADRAO) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	return PecaService;
